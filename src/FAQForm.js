@@ -1,103 +1,85 @@
+// src/components/FAQForm.js
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import './FAQForm.css';
 
 const FAQForm = () => {
-    const [formData, setFormData] = useState({
-        problemName: '',
-        email: '',
-        phoneNumber: '',
-        description: '',
-        file: null
-    });
+  const [formData, setFormData] = useState({
+    name: '',
+    email: '',
+    phone: '',
+    document: null,
+  });
 
-    const [errors, setErrors] = useState({});
+  const navigate = useNavigate();
 
-    const validateForm = () => {
-        let formErrors = {};
-        if (!formData.problemName) formErrors.problemName = 'Problem name is required';
-        if (!formData.email) {
-            formErrors.email = 'Email is required';
-        } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
-            formErrors.email = 'Email address is invalid';
-        }
-        if (!formData.phoneNumber) {
-            formErrors.phoneNumber = 'Phone number is required';
-        } else if (!/^\d{10}$/.test(formData.phoneNumber)) {
-            formErrors.phoneNumber = 'Phone number must be 10 digits';
-        }
-        if (!formData.description) formErrors.description = 'Description is required';
-        return formErrors;
-    };
+  const handleChange = (e) => {
+    const { name, value, type, files } = e.target;
+    if (type === 'file') {
+      setFormData({ ...formData, document: files[0] });
+    } else {
+      setFormData({ ...formData, [name]: value });
+    }
+  };
 
-    const handleChange = (e) => {
-        const { name, value, files } = e.target;
-        setFormData({
-            ...formData,
-            [name]: files ? files[0] : value
-        });
-    };
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    // Add form submission logic here
 
-    const handleSubmit = (e) => {
-        e.preventDefault();
-        const formErrors = validateForm();
-        if (Object.keys(formErrors).length === 0) {
-            console.log('Form data submitted:', formData);
-            // Handle form submission
-        } else {
-            setErrors(formErrors);
-        }
-    };
+    // Redirect to FAQPage after form submission
+    navigate('/faq');
+  };
 
-    return (
-        <form onSubmit={handleSubmit}>
-            <h2>Frequently Asked Question</h2>
-            <input
-                type="text"
-                name="problemName"
-                placeholder="Your Name"
-                value={formData.problemName}
-                onChange={handleChange}
-                className={errors.problemName && 'error-input'}
-                required
-            />
-            {errors.problemName && <span className="error-message">{errors.problemName}</span>}
-            <input
-                type="email"
-                name="email"
-                placeholder="Your Email"
-                value={formData.email}
-                onChange={handleChange}
-                className={errors.email && 'error-input'}
-                required
-            />
-            {errors.email && <span className="error-message">{errors.email}</span>}
-            <input
-                type="tel"
-                name="phoneNumber"
-                placeholder="Your Phone Number"
-                value={formData.phoneNumber}
-                onChange={handleChange}
-                className={errors.phoneNumber && 'error-input'}
-                required
-            />
-            {errors.phoneNumber && <span className="error-message">{errors.phoneNumber}</span>}
-            <textarea
-                name="description"
-                placeholder="Share Feedback"
-                value={formData.description}
-                onChange={handleChange}
-                className={errors.description && 'error-input'}
-                required
-            />
-            {errors.description && <span className="error-message">{errors.description}</span>}
-            <input
-                type="file"
-                name="file"
-                accept=".pdf,.doc,.docx"
-                onChange={handleChange}
-            />
-            <button type="submit">Submit</button>
-        </form>
-    );
+  return (
+    <div className="faq-form-container">
+      <h1 className="form-heading">Submit Your Details</h1>
+      <form onSubmit={handleSubmit}>
+        <div className="form-group">
+          <label htmlFor="name">Name</label>
+          <input
+            type="text"
+            id="name"
+            name="name"
+            value={formData.name}
+            onChange={handleChange}
+            required
+          />
+        </div>
+        <div className="form-group">
+          <label htmlFor="email">Email</label>
+          <input
+            type="email"
+            id="email"
+            name="email"
+            value={formData.email}
+            onChange={handleChange}
+            required
+          />
+        </div>
+        <div className="form-group">
+          <label htmlFor="phone">Phone</label>
+          <input
+            type="tel"
+            id="phone"
+            name="phone"
+            value={formData.phone}
+            onChange={handleChange}
+            required
+          />
+        </div>
+        <div className="form-group">
+          <label htmlFor="document">Upload Document</label>
+          <input
+            type="file"
+            id="document"
+            name="document"
+            onChange={handleChange}
+          />
+        </div>
+        <button type="submit" className="submit-button">Submit</button>
+      </form>
+    </div>
+  );
 };
 
 export default FAQForm;
